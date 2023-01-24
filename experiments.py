@@ -1,6 +1,7 @@
-
-# LA OPCION DE LO DE LA CONTRASEÑA DIFICIL Y TO ESO
 import getopt,sys
+import numpy as np
+import string
+from ataqueArcoiris import *
 
 def help():
     print("Diplaying Help. Options available")
@@ -10,61 +11,106 @@ def help():
     print("python {*.py} -b --BitsHash  => The number of bits of Hash to use. (Default: 32)")
     print("Obligatory to use the following arguments: -anb")
 
+def isHex(s):
+    return (c in string.hexdigits for c in s)
 
-#def main():
-argumentList = sys.argv[1:]
+def main():
 
-# Options (anb requires an argument, thats why it has :)
-options = "ha:n:b:"
+    argumentList = sys.argv[1:]
 
-# Long options : 'period=' requires an argument, so it has = suffixed
-long_options = ["help", "Help", "Algorithm=","algorithm=", "Experiments=", "experiments=", "Bits Hash= ", "bits=", "bitsHash=",""]
+    # Options (anb requires an argument, thats why it has :)
+    options = "ha:n:b:"
 
-try:
+    # Long options : 'period=' requires an argument, so it has = suffixed
+    long_options = ["help", "Help", "Algorithm=","algorithm=", "Experiments=", "experiments=", "Bits Hash= ", "bits=", "bitsHash=",""]
 
-    if (len(sys.argv) == 1):
-       help()
-       raise ValueError("Se requieren más argumentos")
+    try:
 
-    arguments, values = getopt.getopt(argumentList, options, long_options)
+        if (len(sys.argv) == 1):
+           help()
+           raise ValueError("Se requieren más argumentos")
 
-    # list of options tuple (opt, value)
-    print('Options Tuple is {}'.format(arguments))
+        arguments, values = getopt.getopt(argumentList, options, long_options)
 
-    # list of remaining command-line arguments
-    print('Additional Command-line arguments list is {}'.format(values))
+        # list of options tuple (opt, value)
+        print('Options Tuple is {}'.format(arguments))
 
-    # Checking each argument
-    for currentArgument, currentValue in arguments:
-        currentArgument = currentArgument.lower()  # Converting all options to lowercase
-        print(currentArgument)
+        # list of remaining command-line arguments
+        print('Additional Command-line arguments list is {}'.format(values))
 
-        if currentArgument in ("-h", "--help"):
-            help()
-        elif currentArgument in ("-a", "--algorithm"):
-            algorithm = currentValue.lower()
-            if algorithm == "crc32":
-                    print("You can become a web developer.")
-            elif algorithm == "sha":
-                    print("You can become a Data Scientist")
-            elif algorithm == "md5":
-                    print("You can become a backend developer")
-            else:
-                    raise ValueError("The algorithm was not found. (only is valid crc32,md5,sha)")
-            print("Algorithm used:", algorithm)
-        elif currentArgument in ("-n", "--numberexperiments"):
-            if not currentValue.isnumeric():
-                raise TypeError('Work with Positive Numbers Only')
-            print(("Number of experiments to do: (% s)") % (currentValue))
+        # Checking each argument
+        for currentArgument, currentValue in arguments:
+            currentArgument = currentArgument.lower()  # Converting all options to lowercase
+            print(currentArgument)
 
-        elif currentArgument in ("-b", "--bitshash"):
-            if not currentValue.isnumeric():
-                raise TypeError('Work with Numbers Only')
-            print(("Number of Bits of Hash to use: (% s)") % (currentValue))
+            if currentArgument in ("-h", "--help"):
+                help()
+            elif currentArgument in ("-a", "--algorithm"):
+                algorithm = currentValue.lower()
+                if algorithm == "crc32":
+                        print("You can become a web developer.")
+                elif algorithm == "sha":
+                        print("You can become a Data Scientist")
+                elif algorithm == "md5":
+                        print("You can become a backend developer")
+                else:
+                        raise ValueError("The algorithm was not found. (only is valid crc32,md5,sha)")
+                print("Algorithm used:", algorithm)
+            elif currentArgument in ("-n", "--numberexperiments"):
+                if not currentValue.isnumeric():
+                    raise TypeError('Work with Positive Numbers Only')
+                print(("Number of experiments to do: (% s)") % (currentValue))
+                numberexperiments = currentValue
 
-except getopt.error as err:
-    print(str(err))
-    help()
+            elif currentArgument in ("-b", "--bitshash"):
+                if not currentValue.isnumeric():
+                    raise TypeError('Work with Numbers Only')
+                print(("Number of Bits of Hash to use: (% s)") % (currentValue))
+                bitshash = currentValue
 
-#if __name__ == "__main__":
- #   main()
+
+    except getopt.error as err:
+        print(str(err))
+        help()
+
+    successfull_experiments = {}
+    times_experiments = []
+
+    print("#################################################################")
+    print("#################################################################")
+    print("#################################################################\n")
+
+    test = ataqueArcoiris(algorithm, bitshash)
+
+    for i in range(int(numberexperiments)):
+
+        print("#################################################################")
+        print("######################" + " Experimento " + str(i) + " ############################\n")
+        t = int(input("Introduzca longitud de la secuencia(t): "))
+        n = int(input("Introduzca el número de entradas de la tabla(n): "))
+        spacePass = int(input("Introduzca el espacio de caracteres de la contraseña (0, 1 o 2): "))
+        p0 = input("Introduzca el resumen de un password p0 obtenido mediante la función h y una función recodificante r ")
+
+        #if not isHex(p0): # To check that p0 is Hex.
+        #    raise TypeError('Work with Numbers in Hex')
+
+        # Para calcular el tiempo de ejecución
+        #ini_time = time.time()
+        ini_time = time.time()
+        ok = test.ataqueArcoiris(t, n, spacePass, p0)
+        fin_time = time.time()
+        successfull_experiments[i] = "".join(ok)
+        #fin_time = time.time()
+        timeOneExperiment = fin_time - ini_time
+        times_experiments.append(timeOneExperiment)
+        print("El tíempo de ejecución del programa " + str(timeOneExperiment))
+
+    print("#################################################################")
+    print("La media obtenida de los experimentos es: " + np.average(times_experiments))
+    print("La varianza obtenida de los experimentos es: " + np.var(times_experiments))
+    print("La desviación tipica obtenida de los experimentos es: " + np.std(times_experiments))
+
+    print(successfull_experiments)
+
+if __name__ == "__main__":
+    main()
