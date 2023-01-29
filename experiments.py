@@ -89,7 +89,7 @@ def main():
         t = int(input("Introduzca longitud de la secuencia(t): "))
         n = int(input("Introduzca el número de entradas de la tabla(n): "))
         spacePass = int(input("Introduzca el espacio de caracteres de la contraseña (0, 1 o 2): "))
-        p0 = input("Introduzca el resumen de un password p0 obtenido mediante la función h y una función recodificante r ")
+
 
         #if not isHex(p0): # To check that p0 is Hex.
         #    raise TypeError('Work with Numbers in Hex')
@@ -97,7 +97,8 @@ def main():
         # Para calcular el tiempo de ejecución
         #ini_time = time.time()
         ini_time = time.time()
-        ok = test.ataqueArcoiris(t, n, spacePass, p0)
+        #ok = test.ataqueArcoiris(t, n, spacePass, p0)
+        ok = test.ataqueArcoiris(t, n, spacePass)
         fin_time = time.time()
         successfull_experiments[i] = "".join(ok)
         #fin_time = time.time()
@@ -106,11 +107,12 @@ def main():
         print("El tíempo de ejecución del programa " + str(timeOneExperiment))
 
     print("#################################################################")
-    print("La media obtenida de los experimentos es: " + np.average(times_experiments))
-    print("La varianza obtenida de los experimentos es: " + np.var(times_experiments))
-    print("La desviación tipica obtenida de los experimentos es: " + np.std(times_experiments))
+    print("La media obtenida de los experimentos es: " + str(np.average(times_experiments)))
+    print("La varianza obtenida de los experimentos es: " + str(np.var(times_experiments)))
+    print("La desviación tipica obtenida de los experimentos es: " + str(np.std(times_experiments)))
 
     print(successfull_experiments)
 
 if __name__ == "__main__":
     main()
+

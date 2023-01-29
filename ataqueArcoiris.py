@@ -79,6 +79,9 @@ class ataqueArcoiris:
         """
         lenght = int(self.bits/4)  # 10*4 = 40 bits
         #lenght = 10
+        if self.algorithmHash == "crc32":
+            hash = str(hash)
+
         hash = hash[0:lenght]
 
         print("Initial string(hash)", hash)
@@ -121,7 +124,7 @@ class ataqueArcoiris:
         except AttributeError:
             print("Password is None and cannot be encoded.")
 
-    def ataqueArcoiris(self,t,n,spacePass,p0):
+    def ataqueArcoiris(self,t,n,spacePass):
 
         #t = int(input("Introduzca longitud de la secuencia(t): "))
         #n = int(input("Introduzca el número de entradas de la tabla(n): "))
@@ -144,7 +147,7 @@ class ataqueArcoiris:
                 print("Contraseña intermedia: " + password)
             # Store <P,h(P)> in the table.
             hashP = self.functionHash(password, self.algorithmHash, self.bits)
-            print("The last Hash to store in the table is: " + hashP)
+            print("The last Hash to store in the table is: " + str(hashP))
             table[hashP] = generatedPassword
 
         # Require the hash of a password(p0) -> h -> r
@@ -153,19 +156,22 @@ class ataqueArcoiris:
         # Require: Una tabla rainbow para la función h de anchura t.
         # Ensure: pwd tal que p0 = h(pwd) o ERROR
 
-        #p0 = input("Introduzca el resumen de un password p0 obtenido mediante la función h y una función recodificante r ")
+        p0 = input("Introduzca la contraseña a atacar: ")
         p0 = self.functionHash(p0,self.algorithmHash,self.bits)
+        print("El resumen de un password p0 obtenido mediante la función h y una función recodificante r: " + str(p0))
         p = p0
+        final = True
         for i in range(t):  # for i = 1 to t do
             if p in table.keys():  # Las claves son los hashes
+                final = False
                 break
             p = self.functionHash(self.reconstructionFunction(p), self.algorithmHash, self.bits)
-        if i == (t-1):
+        if final == True:
             print("ERROR")
             return "ERORR"
 
         pwd = table.get(p)  # La b es decir la contraseña en la que (e=p), se asigna pwd
-
+        print("ESTO ES :" + pwd)
         while self.functionHash(pwd, self.algorithmHash, self.bits) != p0: # while h(pwd) ̸= p0 do
             #pwd = r(h(pwd))
             pwd = self.reconstructionFunction(self.functionHash(pwd, self.algorithmHash, self.bits))
