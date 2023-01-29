@@ -126,10 +126,6 @@ class ataqueArcoiris:
 
     def ataqueArcoiris(self,t,n,spacePass):
 
-        #t = int(input("Introduzca longitud de la secuencia(t): "))
-        #n = int(input("Introduzca el número de entradas de la tabla(n): "))
-        #spacePass = int(input("Introduzca el espacio de caracteres de la contraseña (0, 1 o 2): "))
-
         # 1: tabla = tabla vacia
         table = {}
 
@@ -179,18 +175,3 @@ class ataqueArcoiris:
         print("Se encontro la password tal q. p0 = h(pwd): " + pwd)
         return pwd
 
-# if __name__ == "__main__":
-#    main()
-
-"""def binario_a_ascii(binario):
-    # Convertir binario a decimal
-    valor = int(binario, 2)
-    # Convertir el decimal a su representación ASCII
-    return chr(valor)
-
-def binario_a_texto(texto_binario):
-    texto_plano = ""
-    for binario in texto_binario.split(separador):
-        texto_plano += binario_a_ascii(binario)
-    return texto_plan
-"""
